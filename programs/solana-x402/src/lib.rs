@@ -73,25 +73,74 @@ pub struct InitializeConfig<'info> {
 #[derive(Accounts)]
 #[instruction(request_id: String)]
 pub struct CreatePaymentRequest<'info> {
-    
+    #[account(mut)]
+    pub requester: Signer<'info>,
+
+    #[account(
+        init,
+        payer = requester,
+        space = PaymentRequest::LEN,
+        seeds = [b"payment_request", request_id.as_bytes()],
+        bump
+    )]
+    pub payment_request: Account<'info, PaymentRequest>,
+
+    pub system_program: Program<'info, System>
+
 }
 
 #[derive(Accounts)]
 #[instruction(request_id: String)]
 pub struct VerifyPayment<'info> {
-    
+    #[account(
+        mut,
+        seeds = [b"payment_request", request_id.as_bytes()],
+        bump = payment_request.bump,
+    )]
+    pub payment_request: Account<'info, PaymentRequest>,
+
+    #[account(
+        mut,
+        seeds = [b"config"],
+        bump = config.bump,
+    )]
+    pub config: Account<'info, PaymentConfig>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    #[account(mut)]
+    pub payer_token_account: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub treasury_token_account: Account<'info, TokenAccount>,
+
+    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Accounts)]
 #[instruction(request_id: String)]
 pub struct CheckPaymentStatus<'info> {
-    
+    #[account(
+        seeds = [b"payment_request", request_id.as_bytes()],
+        bump = payment_request.bump
+    )]
+    pub payment_request: Account<'info, PaymentRequest>,
 }
 
 #[derive(Accounts)]
 #[instruction(request_id: String)]
 pub struct CancelPaymentRequest<'info> {
-    
+    #[account(
+        mut,
+        seeds = [b"payment_request", request_id.as_bytes()],
+        bump = payment_request.bump,
+        close = requester
+    )]
+    pub payment_request: Account<'info, PaymentRequest>,
+
+    #[account(mut)]
+    pub requester: Signer<'info>
 }
 
 // ---- ACCOUNT STRUCTS ----
