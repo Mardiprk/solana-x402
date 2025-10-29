@@ -56,7 +56,18 @@ pub mod solana_x402 {
 
 #[derive(Accounts)]
 pub struct InitializeConfig<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    #[account(
+        init,
+        payer = authority,
+        space = PaymentConfig::INIT_SPACE,
+        seeds = [b"config"],
+        bump
+    )]
+    pub config: Account<'info, PaymentConfig>,
 
+    pub system_program: Program<'info, System>
 }
 
 #[derive(Accounts)]
