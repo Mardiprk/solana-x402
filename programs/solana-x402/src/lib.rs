@@ -7,15 +7,28 @@ declare_id!("2HkEaAhDkTbN9wpVyky8Gmh79xUxRRRiwrqkc8tTUArQ");
 pub mod solana_x402 {
     use super::*;
 
+    // --- init the payment config
     pub fn initialize_config(
         ctx: Context<InitializeConfig>,
         treasury_wallet: Pubkey,
         min_payment_amount: u64
     ) -> Result<()> {
+        let config = &mut ctx.accounts.config;
+
+        config.authority = ctx.accounts.authority.key();
+        config.treasury_wallet = treasury_wallet;
+        config.min_payment_amount = min_payment_amount;
+        config.total_payment_processed = 0;
+        config.bump = ctx.bumps.config;
+
+        msg!("Payment config Initialized");
+        msg!("Treasury: {}", treasury_wallet);
+        msg!("Minimum Payment: {} tokens", min_payment_amount);
 
         Ok(())
     }
 
+    // --- create a payment request
     pub fn create_payment_request(
         ctx: Context<CreatePaymentRequest>,
         request_id: String,
@@ -23,29 +36,96 @@ pub mod solana_x402 {
         resource_identifier: String
     ) -> Result<()>{
 
+        require!(amount > 0, ErrorCode::InvalidAmount);
+        require!(request_id.len() <= 64, ErrorCode::RequestIdTooLong);
+        require!(resource_identifier.len() <= 128, ErrorCode::ResourceIdTooLong);
+        
+        let clock = Clock::get()?;
+        let payment_request = &mut ctx.accounts.payment_request;
+
+        payment_request.request_id = request_id.clone();
+        payment_request.requester = ctx.accounts.requester.key();
+        payment_request.amount = amount;
+        payment_request.resource_identifier = resource_identifier.clone();
+        payment_request.is_paid = false;
+        payment_request.paid_at = 0;
+        payment_request.payer = Pubkey::default();
+        payment_request.created_at = clock.unix_timestamp;
+        payment_request.bump = ctx.bumps.payment_request;
+
+        msg!("Payment request created: {}", request_id);
+        msg!("Amount: {}", amount);
+
         Ok(())
     }
 
+    // --- verify and process payment
     pub fn verify_payment(
         ctx: Context<VerifyPayment>,
         request_id: String
     ) -> Result<()>{
+        let payment_request = &mut ctx.accounts.payment_request;
+        let config = &mut ctx.accounts.config;
+        let clock = Clock::get()?;
+
+        require!(!payment_request.is_paid, ErrorCode::AlreadyPaid);
+        require!(payment_request.request_id == request_id, ErrorCode::RequestIdMismatch);
+        require!(payment_request.amount >= config.min_payment_amount, ErrorCode::InsufficientPayment);
+
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.payer_token_account.to_account_info(),
+            to: ctx.accounts.treasury_token_account.to_account_info(),
+            authority: ctx.accounts.payer.to_account_info()
+        };
+
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+        token::transfer(cpi_ctx, payment_request.amount)?;
+
+        payment_request.is_paid = true;
+        payment_request.paid_at = clock.unix_timestamp;
+        payment_request.payer = ctx.accounts.payer.key();
+
+        msg!("Payment verified and processed");
+        msg!("Request ID: {}", request_id);
+        msg!("Amount: {}", payment_request.amount);
 
         Ok(())
     }
 
+    // --- check if a payment is paid
     pub fn check_payment_status(
         ctx: Context<CheckPaymentStatus>,
         request_id: String
     ) -> Result<()>{
+        let payment_request = &mut ctx.accounts.payment_request;
+
+        msg!("Payment Status Check:");
+        msg!("Request ID: {}", request_id);
+        msg!("Is Paid: {}", payment_request.is_paid);
+        msg!("Amount: {}", payment_request.amount);
+
+        if payment_request.is_paid {
+            msg!("Paid by: {}", payment_request.payer);
+            msg!("paid at: {}", payment_request.paid_at);
+        }
 
         Ok(())
     }
 
+    // --- cancel a payment request (only by requestor, if not paid)
     pub fn cancel_payment_request(
         ctx: Context<CancelPaymentRequest>,
         request_id: String
     ) -> Result<()>{
+        let payment_request = &mut ctx.accounts.payment_request;
+
+        require!(!payment_request.is_paid, ErrorCode::AlreadyPaid);
+        require!(payment_request.request_id == request_id, ErrorCode::RequestIdMismatch);
+        require!(payment_request.requester == ctx.accounts.requester.key(), ErrorCode::UnauthorizedCancellation);
+
+        msg!("Payment request cancelled: {}", payment_request.request_id);
 
         Ok(())
     }
