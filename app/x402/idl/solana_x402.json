@@ -1,0 +1,472 @@
+{
+  "address": "2HkEaAhDkTbN9wpVyky8Gmh79xUxRRRiwrqkc8tTUArQ",
+  "metadata": {
+    "name": "solana_x402",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "cancel_payment_request",
+      "discriminator": [
+        246,
+        129,
+        93,
+        79,
+        189,
+        140,
+        84,
+        7
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "request_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "requester",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "request_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "check_payment_status",
+      "discriminator": [
+        245,
+        156,
+        156,
+        89,
+        32,
+        67,
+        155,
+        23
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "request_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "request_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "create_payment_request",
+      "discriminator": [
+        246,
+        150,
+        103,
+        37,
+        15,
+        36,
+        93,
+        100
+      ],
+      "accounts": [
+        {
+          "name": "requester",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "request_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "request_id",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "resource_identifier",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "initialize_config",
+      "discriminator": [
+        208,
+        127,
+        21,
+        1,
+        194,
+        190,
+        196,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "treasury_wallet",
+          "type": "pubkey"
+        },
+        {
+          "name": "min_payment_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "verify_payment",
+      "discriminator": [
+        70,
+        155,
+        98,
+        44,
+        176,
+        110,
+        74,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "payment_request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "request_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "payer_token_account",
+          "writable": true
+        },
+        {
+          "name": "treasury_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "request_id",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "PaymentConfig",
+      "discriminator": [
+        252,
+        166,
+        185,
+        239,
+        186,
+        79,
+        212,
+        152
+      ]
+    },
+    {
+      "name": "PaymentRequest",
+      "discriminator": [
+        27,
+        20,
+        202,
+        96,
+        101,
+        242,
+        124,
+        69
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidAmount",
+      "msg": "Payment amount must be greater than 0"
+    },
+    {
+      "code": 6001,
+      "name": "RequestIdTooLong",
+      "msg": "Request ID is too long (max 64 characters)"
+    },
+    {
+      "code": 6002,
+      "name": "ResourceIdTooLong",
+      "msg": "Resource identifier is too long (max 128 characters)"
+    },
+    {
+      "code": 6003,
+      "name": "AlreadyPaid",
+      "msg": "Payment request has already been paid"
+    },
+    {
+      "code": 6004,
+      "name": "RequestIdMismatch",
+      "msg": "Request ID does not match"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientPayment",
+      "msg": "Payment amount is below minimum required"
+    },
+    {
+      "code": 6006,
+      "name": "UnauthorizedCancellation",
+      "msg": "Only the requester can cancel this payment request"
+    }
+  ],
+  "types": [
+    {
+      "name": "PaymentConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "min_payment_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_payment_processed",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentRequest",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "request_id",
+            "type": "string"
+          },
+          {
+            "name": "requester",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "resource_identifier",
+            "type": "string"
+          },
+          {
+            "name": "is_paid",
+            "type": "bool"
+          },
+          {
+            "name": "paid_at",
+            "type": "i64"
+          },
+          {
+            "name": "payer",
+            "type": "pubkey"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
