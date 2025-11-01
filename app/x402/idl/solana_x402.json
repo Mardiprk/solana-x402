@@ -80,6 +80,7 @@
       "accounts": [
         {
           "name": "payment_request",
+          "writable": true,
           "pda": {
             "seeds": [
               {

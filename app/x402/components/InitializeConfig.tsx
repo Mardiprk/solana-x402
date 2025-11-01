@@ -37,7 +37,7 @@ export const InitializeConfig: FC = () => {
           preflightCommitment: 'confirmed'
         }
       );
-      const program = new Program<SolanaX402>(IDL, provider);
+      const program = new Program(IDL as any, IDL.address, provider);
 
       const [configPda] = PublicKey.findProgramAddressSync(
         [Buffer.from('config')],
