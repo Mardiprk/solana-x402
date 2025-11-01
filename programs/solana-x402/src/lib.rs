@@ -202,6 +202,7 @@ pub struct VerifyPayment<'info> {
 #[instruction(request_id: String)]
 pub struct CheckPaymentStatus<'info> {
     #[account(
+        mut,
         seeds = [b"payment_request", request_id.as_bytes()],
         bump = payment_request.bump
     )]
@@ -248,8 +249,17 @@ pub struct PaymentRequest{
     pub bump: u8,
 }
 
-impl PaymentRequest{
-    pub const LEN: usize = 8 + (4 + 64) + 32 + 8 + (4 + 128) + 1 + 8 + 32 + 8 + 1;
+impl PaymentRequest {
+    pub const LEN: usize = 8usize
+    .checked_add(4 + 64).unwrap()
+    .checked_add(32).unwrap()
+    .checked_add(8).unwrap()
+    .checked_add(4 + 128).unwrap()
+    .checked_add(1).unwrap()
+    .checked_add(8).unwrap()
+    .checked_add(32).unwrap()
+    .checked_add(8).unwrap()
+    .checked_add(1).unwrap();
 }
 
 // ---- ERROR ----
