@@ -49,7 +49,7 @@ export const VerifyPayment: FC = () => {
 
       // First, check if config exists
       const [configPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from('config')],
+        [Buffer.from('config2')],
         new PublicKey(IDL.address)
       );
 
@@ -58,7 +58,7 @@ export const VerifyPayment: FC = () => {
       const configInfo = await connection.getAccountInfo(configPda);
       
       if (!configInfo) {
-        setStatus('❌ Error: Config not initialized. Please go to "Initialize Config" tab and initialize the system first.');
+        setStatus('Error: Config not initialized. Please go to "Initialize Config" tab and initialize the system first.');
         setFetchingInfo(false);
         return;
       }
@@ -89,7 +89,7 @@ export const VerifyPayment: FC = () => {
 
       const accountInfo = await connection.getAccountInfo(paymentRequestPda);
       if (!accountInfo) {
-        setStatus('❌ Error: Payment request not found. Please check the Request ID.');
+        setStatus('Error: Payment request not found. Please check the Request ID.');
         setFetchingInfo(false);
         return;
       }
@@ -171,7 +171,7 @@ export const VerifyPayment: FC = () => {
       );
 
       const [configPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from('config')],
+        [Buffer.from('config2')],
         new PublicKey(IDL.address)
       );
 
@@ -251,7 +251,7 @@ export const VerifyPayment: FC = () => {
         })
         .rpc();
 
-      setStatus(`✅ Success! Payment completed. Transaction: ${tx}`);
+      setStatus(`Success! Payment completed. Transaction: ${tx}`);
       console.log('Payment transaction:', tx);
       console.log('Explorer:', `https://explorer.solana.com/tx/${tx}?cluster=devnet`);
       
@@ -276,40 +276,38 @@ export const VerifyPayment: FC = () => {
         errorMessage = 'Program error. Check console logs for details.';
       }
       
-      setStatus(`❌ Error: ${errorMessage}`);
+      setStatus(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-2xl font-bold mb-4">Verify & Process Payment</h2>
-      
-      <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
-        <p className="text-sm text-blue-800">
-          💡 Payments are made in <strong>SOL (Wrapped SOL)</strong> on Devnet
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
+        <p className="text-sm text-blue-900 font-medium">
+          Payments are made in <strong className="font-semibold">SOL (Wrapped SOL)</strong> on Devnet
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Request ID
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <input
               type="text"
               value={requestId}
               onChange={(e) => setRequestId(e.target.value)}
               placeholder="Enter the request ID"
               disabled={loading || fetchingInfo}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors text-sm"
             />
             <button
               onClick={fetchPaymentDetails}
               disabled={!requestId || fetchingInfo || loading}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+              className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-md disabled:opacity-50 transition-colors font-medium text-sm"
             >
               {fetchingInfo ? 'Loading...' : 'Fetch Details'}
             </button>
@@ -317,12 +315,12 @@ export const VerifyPayment: FC = () => {
         </div>
 
         {paymentAmountSOL && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-4">
-            <h3 className="font-semibold text-green-800 mb-2">Payment Details</h3>
-            <div className="space-y-1 text-sm text-green-700">
-              <p><strong>Amount:</strong> {paymentAmountSOL} SOL</p>
-              <p><strong>Amount (lamports):</strong> {paymentAmount}</p>
-              <p className="text-xs break-all"><strong>Treasury:</strong> {treasuryWallet}</p>
+          <div className="bg-green-50 border border-green-200 rounded-md p-5">
+            <h3 className="font-semibold text-gray-900 mb-3">Payment Details</h3>
+            <div className="space-y-2 text-sm">
+              <p><span className="text-gray-600 font-medium">Amount:</span> <span className="text-gray-900">{paymentAmountSOL} SOL</span></p>
+              <p><span className="text-gray-600 font-medium">Amount (lamports):</span> <span className="text-gray-900">{paymentAmount}</span></p>
+              <p className="text-xs break-all font-mono"><span className="text-gray-600 font-medium">Treasury:</span> <span className="text-gray-900">{treasuryWallet}</span></p>
             </div>
           </div>
         )}
@@ -330,20 +328,20 @@ export const VerifyPayment: FC = () => {
         <button
           onClick={handleVerify}
           disabled={loading || !wallet.connected || !treasuryWallet || fetchingInfo}
-          className="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-semibold"
+          className="w-full bg-gray-900 text-white py-3 px-4 rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {loading ? 'Processing Payment...' : `Pay ${paymentAmountSOL ? paymentAmountSOL + ' SOL' : ''}`}
         </button>
 
         {status && (
-          <div className={`p-4 rounded-md ${
-            status.includes('❌') || status.includes('Error') 
-              ? 'bg-red-100 text-red-700' 
-              : status.includes('✅') 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-blue-100 text-blue-700'
+          <div className={`p-4 rounded-md border text-sm ${
+            status.includes('Error') 
+              ? 'bg-red-50 border-red-200 text-red-900' 
+              : status.includes('Success') 
+                ? 'bg-green-50 border-green-200 text-green-900' 
+                : 'bg-blue-50 border-blue-200 text-blue-900'
           }`}>
-            <p className="text-sm break-all whitespace-pre-wrap">{status}</p>
+            <p className="break-all whitespace-pre-wrap font-medium">{status}</p>
           </div>
         )}
       </div>

@@ -6,6 +6,7 @@ import { CreatePaymentRequest } from '../components/CreatePaymentRequest';
 import { VerifyPayment } from '../components/VerifyPayment';
 import { CheckPaymentStatus } from '../components/CheckPaymentStatus';
 import { CancelPaymentRequest } from '../components/CancelPaymentRequest';
+import { CloseConfigAccount } from '../components/CloseConfigAccount';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
@@ -17,11 +18,12 @@ export default function Home() {
   }, []);
 
   const tabs = [
-    { id: 'create', label: 'Create Request', icon: '📝' },
-    { id: 'verify', label: 'Verify Payment', icon: '✅' },
-    { id: 'status', label: 'Check Status', icon: '🔍' },
-    { id: 'cancel', label: 'Cancel Request', icon: '❌' },
-    { id: 'config', label: 'Initialize Config', icon: '⚙️' },
+    { id: 'create', label: 'Create Request' },
+    { id: 'verify', label: 'Verify Payment' },
+    { id: 'status', label: 'Check Status' },
+    { id: 'cancel', label: 'Cancel Request' },
+    { id: 'config', label: 'Config' },
+    { id: 'debug', label: 'Debug' },
   ];
 
   if (!mounted) {
@@ -29,203 +31,110 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className="min-h-screen bg-white text-gray-900 antialiased">
       {/* Header */}
-      <header className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="text-3xl">💳</div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Solana Payment System</h1>
-                <p className="text-sm text-gray-600">Decentralized payment requests on Solana</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Solana Payments</h1>
+              <p className="text-sm text-gray-500 mt-1">Decentralized payment system</p>
             </div>
-            <WalletMultiButton />
+            <WalletMultiButton className="!bg-gray-900 !text-white hover:!bg-gray-800 !rounded-md !font-medium !px-4 !py-2" />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Info Banner */}
-        <div className="bg-blue-600 text-white rounded-lg p-4 mb-6 shadow-lg">
-          <div className="flex items-start space-x-3">
-            <div className="text-2xl">ℹ️</div>
-            <div>
-              <h3 className="font-semibold mb-1">Welcome to Solana Payment System</h3>
-              <p className="text-sm text-blue-100">
-                Create payment requests, verify payments, and manage transactions on the Solana blockchain. 
-                Connect your wallet to get started!
-              </p>
-            </div>
-          </div>
-        </div>
-
+      <div className="container mx-auto px-6 py-12 max-w-5xl">
         {/* Tab Navigation */}
-        <div className="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
-          <div className="flex overflow-x-auto">
+        <div className="mb-10 border-b border-gray-200">
+          <div className="flex overflow-x-auto -mb-px">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 min-w-fit px-6 py-4 text-sm font-medium transition-colors ${
+                className={`px-6 py-3 text-sm font-medium transition-colors whitespace-nowrap border-b-2 ${
                   activeTab === tab.id
-                    ? 'bg-indigo-600 text-white border-b-4 border-indigo-800'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border-b-4 border-transparent'
+                    ? 'border-gray-900 text-gray-900'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </div>
+                {tab.label}
               </button>
             ))}
           </div>
         </div>
 
         {/* Tab Content */}
-        <div className="max-w-4xl mx-auto">
+        <div className="space-y-8">
           {activeTab === 'create' && (
-            <div>
-              <CreatePaymentRequest />
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-lg mb-3">💡 How to Create a Payment Request</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start">
-                    <span className="mr-2">1.</span>
-                    <span>Enter a unique Request ID (max 64 characters) - this will identify your payment request</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">2.</span>
-                    <span>Specify the amount in the smallest token units (e.g., for 5 tokens with 6 decimals, enter 5000000)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">3.</span>
-                    <span>Add a resource identifier (max 128 characters) to describe what the payment is for</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">4.</span>
-                    <span>Click "Create Payment Request" to submit the transaction</span>
-                  </li>
-                </ul>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Create Payment Request</h2>
+                <p className="text-sm text-gray-600">Generate a new payment request for your services</p>
               </div>
+              <CreatePaymentRequest />
             </div>
           )}
 
           {activeTab === 'verify' && (
-            <div>
-              <VerifyPayment />
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-lg mb-3">💡 How to Verify a Payment</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start">
-                    <span className="mr-2">1.</span>
-                    <span>Enter the Request ID of the payment you want to process</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">2.</span>
-                    <span>Provide the SPL Token Mint Address (the token you're paying with)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">3.</span>
-                    <span>Enter the Treasury Wallet Address (where the payment will be sent)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">4.</span>
-                    <span>Make sure you have sufficient token balance in your wallet</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">5.</span>
-                    <span>Click "Verify & Pay" to process the payment</span>
-                  </li>
-                </ul>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Verify Payment</h2>
+                <p className="text-sm text-gray-600">Process and verify a payment request</p>
               </div>
+              <VerifyPayment />
             </div>
           )}
 
           {activeTab === 'status' && (
-            <div>
-              <CheckPaymentStatus />
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-lg mb-3">💡 Check Payment Status</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Enter any Request ID to view its current status and details</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>You can see if a payment has been completed, who paid it, and when</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>This is useful for tracking payment requests and verifying transactions</span>
-                  </li>
-                </ul>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Check Payment Status</h2>
+                <p className="text-sm text-gray-600">View the status of any payment request</p>
               </div>
+              <CheckPaymentStatus />
             </div>
           )}
 
           {activeTab === 'cancel' && (
-            <div>
-              <CancelPaymentRequest />
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-lg mb-3">💡 Cancel Payment Request</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Only the original requester can cancel a payment request</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>You can only cancel requests that haven't been paid yet</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Cancelling will close the account and return the rent to you</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>This action is permanent and cannot be undone</span>
-                  </li>
-                </ul>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Cancel Request</h2>
+                <p className="text-sm text-gray-600">Cancel an unpaid payment request</p>
               </div>
+              <CancelPaymentRequest />
             </div>
           )}
 
           {activeTab === 'config' && (
-            <div>
-              <InitializeConfig />
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold text-lg mb-3">💡 Initialize Configuration</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
-                  <li className="flex items-start">
-                    <span className="mr-2">⚠️</span>
-                    <span className="font-semibold">This should only be done once when first deploying the program!</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">1.</span>
-                    <span>Set the treasury wallet address where all payments will be received</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">2.</span>
-                    <span>Define the minimum payment amount in smallest token units</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">3.</span>
-                    <span>Only the program authority can initialize the config</span>
-                  </li>
-                </ul>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Configuration</h2>
+                <p className="text-sm text-gray-600">Initialize system configuration (one-time setup)</p>
               </div>
+              <InitializeConfig />
+            </div>
+          )}
+
+          {activeTab === 'debug' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-semibold mb-2 text-gray-900">Debug</h2>
+                <p className="text-sm text-gray-600">Debug tools for config account management</p>
+              </div>
+              <CloseConfigAccount />
             </div>
           )}
         </div>
 
-        {/* Footer Info */}
-        <div className="mt-12 text-center text-sm text-gray-600">
-          <p>Built on Solana • Powered by Anchor Framework</p>
-          <p className="mt-2">Program ID: 2HkEaAhDkTbN9wpVyky8Gmh79xUxRRRiwrqkc8tTUArQ</p>
+        {/* Footer */}
+        <div className="mt-20 pt-8 border-t border-gray-200">
+          <div className="text-center text-xs text-gray-500">
+            <p className="mb-2">Built on Solana • Powered by Anchor</p>
+            <p className="font-mono text-gray-400">Program ID: 2HkEaAhDkTbN9wpVyky8Gmh79xUxRRRiwrqkc8tTUArQ</p>
+          </div>
         </div>
       </div>
     </main>

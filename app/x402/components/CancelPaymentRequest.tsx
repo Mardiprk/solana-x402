@@ -67,18 +67,16 @@ export const CancelPaymentRequest: FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-2xl font-bold mb-4 text-red-600">Cancel Payment Request</h2>
-      
-      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
-        <p className="text-sm text-yellow-800">
-          ⚠️ Warning: You can only cancel payment requests that you created and that haven't been paid yet.
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+        <p className="text-sm text-yellow-900 font-medium">
+          <strong className="font-semibold">Warning:</strong> You can only cancel payment requests that you created and that haven't been paid yet.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Request ID
           </label>
           <input
@@ -86,21 +84,25 @@ export const CancelPaymentRequest: FC = () => {
             value={requestId}
             onChange={(e) => setRequestId(e.target.value)}
             placeholder="Enter the request ID to cancel"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-colors text-sm"
           />
         </div>
 
         <button
           onClick={handleCancel}
           disabled={loading || !wallet.connected}
-          className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {loading ? 'Cancelling...' : 'Cancel Payment Request'}
         </button>
 
         {status && (
-          <div className={`p-4 rounded-md ${status.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-            <p className="text-sm break-all">{status}</p>
+          <div className={`p-4 rounded-md border text-sm ${
+            status.includes('Error') 
+              ? 'bg-red-50 border-red-200 text-red-900' 
+              : 'bg-green-50 border-green-200 text-green-900'
+          }`}>
+            <p className="break-all font-medium">{status}</p>
           </div>
         )}
       </div>

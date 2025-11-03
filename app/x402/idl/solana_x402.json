@@ -119,6 +119,47 @@
       ]
     },
     {
+      "name": "close_config",
+      "discriminator": [
+        145,
+        9,
+        72,
+        157,
+        95,
+        125,
+        61,
+        85
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                  50
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "create_payment_request",
       "discriminator": [
         246,
@@ -219,7 +260,8 @@
                   110,
                   102,
                   105,
-                  103
+                  103,
+                  50
                 ]
               }
             ]
@@ -299,7 +341,8 @@
                   110,
                   102,
                   105,
-                  103
+                  103,
+                  50
                 ]
               }
             ]
@@ -394,6 +437,11 @@
       "code": 6006,
       "name": "UnauthorizedCancellation",
       "msg": "Only the requester can cancel this payment request"
+    },
+    {
+      "code": 6007,
+      "name": "UnauthorizedClose",
+      "msg": "Only the config authority can close the config account"
     }
   ],
   "types": [

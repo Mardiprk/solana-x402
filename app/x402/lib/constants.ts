@@ -25,7 +25,7 @@ export const COMMON_TOKENS = {
 export const DEFAULT_TOKEN_MINT = WSOL_MINT;
 
 // Config seeds
-export const CONFIG_SEED = 'config';
+export const CONFIG_SEED = 'config2';
 export const PAYMENT_REQUEST_SEED = 'payment_request';
 
 // Helper function to get explorer link for transaction

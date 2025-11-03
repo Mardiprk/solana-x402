@@ -115,12 +115,10 @@ export const CreatePaymentRequest: FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-2xl font-bold mb-4">Create Payment Request</h2>
-      
-      <div className="space-y-4">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Request ID (max 64 characters)
           </label>
           <input
@@ -130,12 +128,12 @@ export const CreatePaymentRequest: FC = () => {
             placeholder="e.g., payment-001"
             maxLength={64}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors text-sm"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Amount (in smallest token units)
           </label>
           <input
@@ -144,12 +142,12 @@ export const CreatePaymentRequest: FC = () => {
             onChange={(e) => setAmount(e.target.value)}
             placeholder="e.g., 5000000 for 5 tokens with 6 decimals"
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors text-sm"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Resource Identifier (max 128 characters)
           </label>
           <input
@@ -159,21 +157,25 @@ export const CreatePaymentRequest: FC = () => {
             placeholder="e.g., product-123 or service-xyz"
             maxLength={128}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-gray-900 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors text-sm"
           />
         </div>
 
         <button
           onClick={handleCreate}
           disabled={loading || !wallet.connected}
-          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="w-full bg-gray-900 text-white py-3 px-4 rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           {loading ? 'Creating...' : 'Create Payment Request'}
         </button>
 
         {status && (
-          <div className={`p-4 rounded-md ${status.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-            <p className="text-sm break-all">{status}</p>
+          <div className={`p-4 rounded-md border text-sm ${
+            status.includes('Error') 
+              ? 'bg-red-50 border-red-200 text-red-900' 
+              : 'bg-green-50 border-green-200 text-green-900'
+          }`}>
+            <p className="break-all font-medium">{status}</p>
           </div>
         )}
       </div>
