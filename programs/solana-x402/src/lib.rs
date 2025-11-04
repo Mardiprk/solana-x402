@@ -130,6 +130,28 @@ pub mod solana_x402 {
         Ok(())
     }
 
+    // --- close config account (for reset/redeploy scenarios)
+    // This can close both valid and corrupted accounts
+    pub fn close_config(
+        ctx: Context<CloseConfig>
+    ) -> Result<()> {
+        // Transfer all lamports to authority
+        let config_lamports = ctx.accounts.config.lamports();
+        **ctx.accounts.authority.lamports.borrow_mut() = ctx.accounts.authority.lamports()
+            .checked_add(config_lamports)
+            .ok_or(anchor_lang::error::ErrorCode::ConstraintRaw)?;
+        
+        // Assign account to system program (this clears owner)
+        ctx.accounts.config.assign(&System::id());
+        
+        // Resize to 0 (this closes the account)
+        ctx.accounts.config.resize(0)?;
+        
+        msg!("Config account closed");
+
+        Ok(())
+    }
+
 }
 
 // ---- ACCOUNT VALIDATION ----
@@ -142,7 +164,7 @@ pub struct InitializeConfig<'info> {
         init,
         payer = authority,
         space = PaymentConfig::INIT_SPACE,
-        seeds = [b"config"],
+        seeds = [b"config2"],
         bump
     )]
     pub config: Account<'info, PaymentConfig>,
@@ -181,7 +203,7 @@ pub struct VerifyPayment<'info> {
 
     #[account(
         mut,
-        seeds = [b"config"],
+        seeds = [b"config2"],
         bump = config.bump,
     )]
     pub config: Account<'info, PaymentConfig>,
@@ -222,6 +244,19 @@ pub struct CancelPaymentRequest<'info> {
 
     #[account(mut)]
     pub requester: Signer<'info>
+}
+
+#[derive(Accounts)]
+pub struct CloseConfig<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    #[account(
+        mut,
+        seeds = [b"config2"],
+        bump
+    )]
+    /// CHECK: This account may be corrupted and can't be deserialized. We close it manually.
+    pub config: AccountInfo<'info>,
 }
 
 // ---- ACCOUNT STRUCTS ----
@@ -286,4 +321,7 @@ pub enum ErrorCode {
 
     #[msg("Only the requester can cancel this payment request")]
     UnauthorizedCancellation,
+
+    #[msg("Only the config authority can close the config account")]
+    UnauthorizedClose,
 }
